@@ -20,14 +20,12 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setQuestions([
-      ...questions,
-      {
-        prompt: formData.prompt,
-        answers: [formData.answer1, formData.answer2, formData.answer3],
-        correctAnswer: formData.correctAnswer,
-      },
-    ]);
+    const newQuestion = {
+      prompt: formData.prompt,
+      answers: [formData.answer1, formData.answer2, formData.answer3],
+      correctAnswer: formData.correctAnswer,
+    };
+    setQuestions((prev) => [...prev, newQuestion]);
     setFormData({
       prompt: '',
       answer1: '',
@@ -35,6 +33,18 @@ function App() {
       answer3: '',
       correctAnswer: '0',
     });
+  };
+
+  const handleDelete = (indexToDelete) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.filter((_, index) => index !== indexToDelete)
+    );
+  };
+
+  const handleCorrectAnswerChange = (index, newValue) => {
+    const updatedQuestions = [...questions];
+    updatedQuestions[index].correctAnswer = newValue;
+    setQuestions(updatedQuestions);
   };
 
   return (
@@ -87,18 +97,31 @@ function App() {
         <button type="submit">Submit</button>
       </form>
 
-      <div>
+      <ul>
         {questions.map((question, index) => (
-          <div key={index}>
+          <li key={index}>
             <p>{question.prompt}</p>
             <ul>
               {question.answers.map((answer, i) => (
                 <li key={i}>{answer}</li>
               ))}
             </ul>
-          </div>
+
+            <label htmlFor={`correctAnswer-${index}`}>Correct Answer</label>
+            <select
+              id={`correctAnswer-${index}`}
+              value={question.correctAnswer}
+              onChange={(e) => handleCorrectAnswerChange(index, e.target.value)}
+            >
+              <option value="0">Answer 1</option>
+              <option value="1">Answer 2</option>
+              <option value="2">Answer 3</option>
+            </select>
+
+            <button onClick={() => handleDelete(index)}>Delete Question</button>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
