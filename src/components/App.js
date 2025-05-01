@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import '@testing-library/jest-dom/extend-expect';
+
 
 function App() {
   const [questions, setQuestions] = useState([]);
